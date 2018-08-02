@@ -1,0 +1,73 @@
+rule EverybodyCanReadEverything {
+    description: "Allow all participants read access to all resources"
+    participant: "blood.donation.assets.BloodOwner"
+    operation: READ
+    resource: "blood.donation.assets.*"
+    action: ALLOW
+}
+
+rule DonarToReceiverTransferSubmitTransactions {
+    description: "Donar to Receiver Transfer can be done only by Person"
+    participant: "blood.donation.assets.Person"
+    operation: CREATE
+    resource: "blood.donation.assets.DonarToReceiverTransfer"
+    action: ALLOW
+}
+
+rule DonarToBankTransferSubmitTransactions {
+    description: "Donar to Bank Transfer can be done only by Person"
+    participant: "blood.donation.assets.Person"
+    operation: CREATE
+    resource: "blood.donation.assets.DonarToBankTransfer"
+    action: ALLOW
+}
+
+rule BankToReceiverTransferSubmitTransactions {
+    description: "Bank to Receiver Transfer can be done only by Bank"
+    participant: "blood.donation.assets.BloodBank"
+    operation: CREATE
+    resource: "blood.donation.assets.BankToReceiverTransfer"
+    action: ALLOW
+}
+
+rule OwnerHasFullAccessToBloodUnitAsset {
+    description: "Allow all participants full access to BloodUnit asset if it is not yet donated"
+    participant(p): "blood.donation.assets.BloodOwner"
+    operation: ALL
+    resource(r): "blood.donation.assets.BloodUnit"
+    condition: (r.owner.getIdentifier() === p.getIdentifier() && r.bloodDonated !== true)
+    action: ALLOW
+}
+
+rule SystemACL {
+  description:  "System ACL to permit all access"
+  participant: "org.hyperledger.composer.system.Participant"
+  operation: ALL
+  resource: "org.hyperledger.composer.system.**"
+  action: ALLOW
+}
+
+rule NetworkAdminUser {
+    description: "Grant business network administrators full access to user resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "**"
+    action: ALLOW
+}
+
+rule NetworkAdminUserRestrictedAccess {
+    description: "Allow access to BloodUnit asset if it is not yet donated"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: UPDATE, DELETE
+    resource(r): "blood.donation.assets.BloodUnit"
+    condition: (r.bloodDonated === true)
+    action: DENY
+}
+
+rule NetworkAdminSystem {
+    description: "Grant business network administrators full access to system resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}

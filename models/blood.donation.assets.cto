@@ -1,0 +1,38 @@
+namespace blood.donation.assets
+
+participant BloodOwner identified by ownerId {
+  o String ownerId
+}
+
+participant Person extends BloodOwner {
+  o String firstName
+  o String lastName
+  o String bloodGroup
+  o Integer points default = 0
+}
+
+participant BloodBank extends BloodOwner  {
+  o String bloodBankName
+}
+
+asset BloodUnit identified by bloodId {
+  o String bloodId
+  --> BloodOwner owner
+  o Boolean bloodDonated
+  o String bloodGroup
+}
+
+transaction DonarToReceiverTransfer {
+    --> BloodUnit bloodUnit
+    --> Person receiver
+}
+
+transaction DonarToBankTransfer {
+    --> BloodUnit bloodUnit
+    --> BloodBank bank
+}
+
+transaction BankToReceiverTransfer {
+    --> BloodUnit bloodUnit
+    --> Person receiver
+}
