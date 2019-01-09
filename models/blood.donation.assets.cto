@@ -15,10 +15,10 @@ participant BloodBank extends BloodOwner  {
   o String bloodBankName
 }
 
-asset BloodUnit identified by bloodId {
-  o String bloodId
+asset BloodUnit identified by unitId {
+  o String unitId
   --> BloodOwner owner
-  o Boolean bloodDonated
+  o Boolean bloodDonated default = false
   o String bloodGroup
 }
 
